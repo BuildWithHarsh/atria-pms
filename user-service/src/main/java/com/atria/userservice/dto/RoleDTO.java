@@ -1,5 +1,6 @@
 package com.atria.userservice.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.util.UUID;
@@ -10,5 +11,6 @@ import java.util.UUID;
 @Builder
 public class RoleDTO {
     private UUID id;
+    @NotBlank
     private String name;
 }
