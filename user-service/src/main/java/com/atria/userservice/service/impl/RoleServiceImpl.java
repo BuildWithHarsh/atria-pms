@@ -1,19 +1,19 @@
-package com.atria.userservice.service;
+package com.atria.userservice.service.impl;
 
 import com.atria.userservice.dto.RoleDTO;
 import com.atria.userservice.entity.Role;
 import com.atria.userservice.mapper.RoleMapper;
 import com.atria.userservice.repositories.RoleRepository;
+import com.atria.userservice.service.IRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class RoleServiceImpl implements RoleService {
+public class RoleServiceImpl implements IRoleService {
 
     private final RoleRepository roleRepository;
 
@@ -32,7 +32,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO getRoleById(UUID id) {
+    public RoleDTO getRoleById(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
@@ -48,7 +48,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public RoleDTO updateRole(UUID id, RoleDTO dto) {
+    public RoleDTO updateRole(Long id, RoleDTO dto) {
 
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
@@ -61,7 +61,7 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void deleteRole(UUID id) {
+    public void deleteRole(Long id) {
 
         if (!roleRepository.existsById(id)) {
             throw new RuntimeException("Role not found");

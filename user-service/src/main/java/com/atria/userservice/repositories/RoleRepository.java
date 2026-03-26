@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-public interface RoleRepository extends JpaRepository<Role, UUID> {
+public interface RoleRepository extends JpaRepository<Role, Long> {
 
     Optional<Role> findByName(String name);
 

@@ -16,8 +16,8 @@ import java.util.UUID;
 @Table(name = "roles")
 public class Role extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     @Column(unique = true, nullable = false)
     private String name;
 }

@@ -1,48 +1,51 @@
-package com.atria.userservice.service;
+package com.atria.userservice.service.impl;
 
 import com.atria.userservice.dto.UserRequestDTO;
 import com.atria.userservice.dto.UserResponseDTO;
+import com.atria.userservice.dto.UserResponseObject;
 import com.atria.userservice.entity.Role;
 import com.atria.userservice.entity.User;
+import com.atria.userservice.exception.UserAlreadyExistsException;
+import com.atria.userservice.exception.UserNotFoundException;
 import com.atria.userservice.mapper.UserMapper;
 import com.atria.userservice.repositories.RoleRepository;
 import com.atria.userservice.repositories.UserRepository;
+import com.atria.userservice.service.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl implements IUserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseDTO createUser(UserRequestDTO dto) {
+    public UserResponseObject createUser(UserRequestDTO dto) {
 
         // ✅ Check duplicate email/username
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new RuntimeException("Email already exists");
+            throw new UserAlreadyExistsException("User already exists with the given email address");
         }
 
         if (userRepository.existsByUsername(dto.getUsername())) {
-            throw new RuntimeException("Username already exists");
+            throw new UserAlreadyExistsException("User already exists with the given username");
         }
 
-        // ✅ Map DTO → Entity
+
         User user = UserMapper.toEntity(dto);
 
-        // ✅ Encode password
+
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
 
-        // ✅ Fetch roles
+
         Set<Role> roles = roleRepository.findByNameIn(dto.getRoles());
 
         if (roles.isEmpty()) {
@@ -58,15 +61,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO getUserById(UUID id) {
+    public UserResponseObject getUserById(Long id) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User","ID",String.valueOf(id)));
 
         return UserMapper.toDTO(user);
     }
 
     @Override
-    public List<UserResponseDTO> getAllUsers() {
+    public List<UserResponseObject> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::toDTO)
@@ -74,24 +77,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDTO updateUser(UUID id, UserRequestDTO dto) {
+    public UserResponseObject updateUser(Long id, UserRequestDTO dto) {
 
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new UserNotFoundException("User","ID",String.valueOf(id)));
 
-        // ✅ Update fields
         user.setEmail(dto.getEmail());
         user.setUsername(dto.getUsername());
         user.setFirstName(dto.getFirstName());
         user.setLastName(dto.getLastName());
         user.setImage(dto.getImage());
 
-        // ✅ Update password (if provided)
         if (dto.getPassword() != null && !dto.getPassword().isEmpty()) {
             user.setPassword(passwordEncoder.encode(dto.getPassword()));
         }
 
-        // ✅ Update roles
         if (dto.getRoles() != null && !dto.getRoles().isEmpty()) {
             Set<Role> roles = roleRepository.findByNameIn(dto.getRoles());
 
@@ -108,11 +108,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(UUID id) {
+    public Boolean  deleteUser(Long id) {
         if (!userRepository.existsById(id)) {
-            throw new RuntimeException("User not found");
+            throw new UserNotFoundException("User","ID",String.valueOf(id));
         }
-
-        userRepository.deleteById(id);
+       userRepository.deleteById(id);
+        return true;
     }
 }

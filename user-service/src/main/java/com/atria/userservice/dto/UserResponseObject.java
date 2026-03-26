@@ -1,24 +1,24 @@
 package com.atria.userservice.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserRequestDTO {
-    @NotBlank
-    @Email
+public class UserResponseObject {
+    private Long id;
     private String email;
     private String username;
     private String firstName;
     private String lastName;
-    private String password;
     private String image;
+    private boolean enabled;
     private String provider;
-    private Set<String> roles; // role names like "ADMIN", "USER"
+    private Set<RoleDTO> roles;
 }
