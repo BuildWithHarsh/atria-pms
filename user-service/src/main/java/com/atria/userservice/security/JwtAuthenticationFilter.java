@@ -13,6 +13,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -29,6 +30,7 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
@@ -38,14 +40,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         String authorization = request.getHeader("Authorization");
+        log.info("Authorization Header : "+authorization);
         boolean isBearerToken = Objects.nonNull(authorization) ? authorization.startsWith("Bearer ") : false;
         if (isBearerToken) {
             String jwtToken = authorization.substring(7);
-            if (jwtService.isAccessToken(jwtToken)) {
-                filterChain.doFilter(request, response);
-                return;
-            }
+
             try {
+                if (jwtService.isAccessToken(jwtToken)) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
                 String username = jwtService.extractUsername(jwtToken);
                 userRepository.findByUsername(username).ifPresent(user -> {
                     if (user.isEnabled()) {

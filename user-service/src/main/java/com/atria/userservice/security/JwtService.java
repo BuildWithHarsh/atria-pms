@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
+@Data
 @RequiredArgsConstructor
 public class JwtService {
 
@@ -46,7 +48,7 @@ public class JwtService {
         return resolver.apply(claims);
     }
 
-    private String generateToken(User user) {
+    public String generateToken(User user) {
         List<String> userRoles = user.getRoles().isEmpty() ? List.of() : user.getRoles().stream().map(Role::getName).toList();
         return Jwts.builder()
                 .id(String.valueOf(RandomGeneraterUtil.generateTenDigitNumber()))
@@ -63,7 +65,7 @@ public class JwtService {
                 .compact();
     }
 
-    private String generateRefreshToken(User user, String id) {
+    public String generateRefreshToken(User user, String id) {
         return Jwts.builder()
                 .id(id)
                 .subject(user.getUsername())
