@@ -10,7 +10,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserRequestDTO {
+public class UserRequestDto {
     @NotBlank
     @Email
     private String email;

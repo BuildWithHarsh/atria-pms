@@ -1,18 +1,18 @@
 package com.atria.userservice.service;
 
-import com.atria.userservice.dto.RoleDTO;
+import com.atria.userservice.dto.RoleDto;
 
 import java.util.List;
 
 public interface IRoleService {
 
-    RoleDTO createRole(RoleDTO dto);
+    RoleDto createRole(RoleDto dto);
 
-    RoleDTO getRoleById(Long id);
+    RoleDto getRoleById(Long id);
 
-    List<RoleDTO> getAllRoles();
+    List<RoleDto> getAllRoles();
 
-    RoleDTO updateRole(Long id, RoleDTO dto);
+    RoleDto updateRole(Long id, RoleDto dto);
 
     void deleteRole(Long id);
 }

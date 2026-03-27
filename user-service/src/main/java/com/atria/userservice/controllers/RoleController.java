@@ -1,6 +1,6 @@
 package com.atria.userservice.controllers;
 
-import com.atria.userservice.dto.RoleDTO;
+import com.atria.userservice.dto.RoleDto;
 import com.atria.userservice.service.IRoleService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,27 +19,27 @@ public class RoleController {
 
     // ✅ Create Role
     @PostMapping
-    public ResponseEntity<RoleDTO> createRole(@Valid @RequestBody RoleDTO dto) {
+    public ResponseEntity<RoleDto> createRole(@Valid @RequestBody RoleDto dto) {
         return new ResponseEntity<>(IRoleService.createRole(dto), HttpStatus.CREATED);
     }
 
     // ✅ Get Role by ID
     @GetMapping("/{id}")
-    public ResponseEntity<RoleDTO> getRoleById(@PathVariable Long id) {
+    public ResponseEntity<RoleDto> getRoleById(@PathVariable Long id) {
         return ResponseEntity.ok(IRoleService.getRoleById(id));
     }
 
     // ✅ Get All Roles
     @GetMapping
-    public ResponseEntity<List<RoleDTO>> getAllRoles() {
+    public ResponseEntity<List<RoleDto>> getAllRoles() {
         return ResponseEntity.ok(IRoleService.getAllRoles());
     }
 
     // ✅ Update Role
     @PutMapping("/{id}")
-    public ResponseEntity<RoleDTO> updateRole(
+    public ResponseEntity<RoleDto> updateRole(
             @PathVariable Long id,
-            @Valid @RequestBody RoleDTO dto) {
+            @Valid @RequestBody RoleDto dto) {
 
         return ResponseEntity.ok(IRoleService.updateRole(id, dto));
     }

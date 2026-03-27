@@ -1,8 +1,7 @@
 package com.atria.userservice.mapper;
 
-import com.atria.userservice.dto.UserRequestDTO;
-import com.atria.userservice.dto.UserResponseDTO;
-import com.atria.userservice.dto.UserResponseObject;
+import com.atria.userservice.dto.UserRequestDto;
+import com.atria.userservice.dto.UserResponseDto;
 import com.atria.userservice.entity.Provider;
 import com.atria.userservice.entity.Role;
 import com.atria.userservice.entity.User;
@@ -13,10 +12,10 @@ import java.util.stream.Collectors;
 public class UserMapper {
 
     // ✅ Entity → Response DTO
-    public static UserResponseObject toDTO(User user) {
+    public static UserResponseDto toDTO(User user) {
         if (user == null) return null;
 
-        return UserResponseObject.builder()
+        return UserResponseDto.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .username(user.getUsername())
@@ -27,13 +26,13 @@ public class UserMapper {
                 .provider(user.getProvider().name())
                 .roles(user.getRoles()
                         .stream()
-                        .map(RoleMapper::toDTO)
-                        .collect(Collectors.toSet()))
+                        .map(role -> role.getName())
+                        .collect(Collectors.toList()))
                 .build();
     }
 
     // ✅ Request DTO → Entity (basic fields only)
-    public static User toEntity(UserRequestDTO dto) {
+    public static User toEntity(UserRequestDto dto) {
         if (dto == null) return null;
 
         return User.builder()

@@ -6,9 +6,9 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserResponseDTO {
+public class ApiResponseDto<T> {
    private String status;
    private String message;
-   private UserResponseObject user;
+   private T user;
 }
 

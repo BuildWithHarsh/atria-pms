@@ -1,6 +1,6 @@
 package com.atria.userservice.service.impl;
 
-import com.atria.userservice.dto.RoleDTO;
+import com.atria.userservice.dto.RoleDto;
 import com.atria.userservice.entity.Role;
 import com.atria.userservice.mapper.RoleMapper;
 import com.atria.userservice.repositories.RoleRepository;
@@ -18,7 +18,7 @@ public class RoleServiceImpl implements IRoleService {
     private final RoleRepository roleRepository;
 
     @Override
-    public RoleDTO createRole(RoleDTO dto) {
+    public RoleDto createRole(RoleDto dto) {
 
         if (roleRepository.existsByName(dto.getName())) {
             throw new RuntimeException("Role already exists");
@@ -32,7 +32,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public RoleDTO getRoleById(Long id) {
+    public RoleDto getRoleById(Long id) {
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found"));
 
@@ -40,7 +40,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public List<RoleDTO> getAllRoles() {
+    public List<RoleDto> getAllRoles() {
         return roleRepository.findAll()
                 .stream()
                 .map(RoleMapper::toDTO)
@@ -48,7 +48,7 @@ public class RoleServiceImpl implements IRoleService {
     }
 
     @Override
-    public RoleDTO updateRole(Long id, RoleDTO dto) {
+    public RoleDto updateRole(Long id, RoleDto dto) {
 
         Role role = roleRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Role not found"));

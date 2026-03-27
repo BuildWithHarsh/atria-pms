@@ -1,20 +1,19 @@
 package com.atria.userservice.service;
 
-import com.atria.userservice.dto.UserRequestDTO;
-import com.atria.userservice.dto.UserResponseDTO;
-import com.atria.userservice.dto.UserResponseObject;
+import com.atria.userservice.dto.UserRequestDto;
+import com.atria.userservice.dto.UserResponseDto;
 
 import java.util.List;
 
 public interface IUserService {
 
-    UserResponseObject createUser(UserRequestDTO dto);
+    UserResponseDto createUser(UserRequestDto dto);
 
-    UserResponseObject getUserById(Long id);
+    UserResponseDto getUserById(Long id);
 
-    List<UserResponseObject> getAllUsers();
+    List<UserResponseDto> getAllUsers();
 
-    UserResponseObject updateUser(Long id, UserRequestDTO dto);
+    UserResponseDto updateUser(Long id, UserRequestDto dto);
 
     Boolean deleteUser(Long id);
 }

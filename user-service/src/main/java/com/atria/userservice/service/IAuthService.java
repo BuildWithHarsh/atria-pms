@@ -1,9 +1,8 @@
 package com.atria.userservice.service;
 
-import com.atria.userservice.dto.UserRequestDTO;
-import com.atria.userservice.dto.UserResponseDTO;
-import com.atria.userservice.dto.UserResponseObject;
+import com.atria.userservice.dto.UserRequestDto;
+import com.atria.userservice.dto.UserResponseDto;
 
 public interface IAuthService {
-    UserResponseObject registerUser(UserRequestDTO userRequestDTO);
+    UserResponseDto registerUser(UserRequestDto userRequestDTO);
 }

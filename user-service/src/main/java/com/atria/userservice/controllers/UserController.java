@@ -1,10 +1,9 @@
 package com.atria.userservice.controllers;
 
 import com.atria.userservice.constants.UserServiceConstants;
-import com.atria.userservice.dto.ResponseDto;
-import com.atria.userservice.dto.UserRequestDTO;
-import com.atria.userservice.dto.UserResponseDTO;
-import com.atria.userservice.dto.UserResponseObject;
+import com.atria.userservice.dto.ApiResponseDto;
+import com.atria.userservice.dto.UserRequestDto;
+import com.atria.userservice.dto.UserResponseDto;
 import com.atria.userservice.service.IUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,57 +22,57 @@ public class UserController {
 
     /*--------------------CREATE A USER-----------------------*/
     @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(
-            @Valid @RequestBody UserRequestDTO requestDTO) {
-        UserResponseObject response = IUserService.createUser(requestDTO);
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> createUser(
+            @Valid @RequestBody UserRequestDto requestDTO) {
+        UserResponseDto response = IUserService.createUser(requestDTO);
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(new UserResponseDTO(UserServiceConstants.STATUS_201, UserServiceConstants.MESSAGE_201, response));
+                .body(new ApiResponseDto<UserResponseDto>(UserServiceConstants.STATUS_201, UserServiceConstants.MESSAGE_201, response));
     }
 
     /*--------------------GET A USER-----------------------*/
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseObject> getUserById(@PathVariable Long id) {
-        UserResponseObject response = IUserService.getUserById(id);
+    public ResponseEntity<UserResponseDto> getUserById(@PathVariable Long id) {
+        UserResponseDto response = IUserService.getUserById(id);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     /*--------------------GET ALL USER-----------------------*/
     @GetMapping
-    public ResponseEntity<List<UserResponseObject>> getAllUsers() {
-        List<UserResponseObject> users = IUserService.getAllUsers();
+    public ResponseEntity<List<UserResponseDto>> getAllUsers() {
+        List<UserResponseDto> users = IUserService.getAllUsers();
         return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     /*--------------------UPDATE A USER-----------------------*/
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponseDTO> updateUser(
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> updateUser(
             @PathVariable Long id,
-            @Valid @RequestBody UserRequestDTO requestDTO) {
+            @Valid @RequestBody UserRequestDto requestDTO) {
         try{
-            UserResponseObject updatedUser = IUserService.updateUser(id, requestDTO);
+            UserResponseDto updatedUser = IUserService.updateUser(id, requestDTO);
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new UserResponseDTO(UserServiceConstants.STATUS_200, UserServiceConstants.MESSAGE_200, updatedUser));
+                    .body(new ApiResponseDto<UserResponseDto>(UserServiceConstants.STATUS_200, UserServiceConstants.MESSAGE_200, updatedUser));
         }catch (Exception e){
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new UserResponseDTO("417", e.getMessage(),null));
+                    .body(new ApiResponseDto<UserResponseDto>("417", e.getMessage(),null));
         }
     }
 
     /*--------------------DELETE A USER-----------------------*/
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResponseDto> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<ApiResponseDto<UserResponseDto>> deleteUser(@PathVariable Long id) {
         Boolean isDeleted = IUserService.deleteUser(id);
         if(isDeleted) {
             return ResponseEntity
                     .status(HttpStatus.OK)
-                    .body(new ResponseDto(UserServiceConstants.STATUS_200, UserServiceConstants.MESSAGE_200));
+                    .body(new ApiResponseDto<UserResponseDto>(UserServiceConstants.STATUS_200, UserServiceConstants.MESSAGE_200,null));
         }else{
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseDto(UserServiceConstants.STATUS_417, UserServiceConstants.MESSAGE_417_DELETE));
+                    .body(new ApiResponseDto<UserResponseDto>(UserServiceConstants.STATUS_417, UserServiceConstants.MESSAGE_417_DELETE, null));
         }
     }
 }

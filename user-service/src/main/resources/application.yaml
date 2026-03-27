@@ -1,9 +1,4 @@
 spring:
-  security:
-    user:
-      name: "admin"
-      password : "admin"
-
   application:
     name: user-service
   datasource:
@@ -24,3 +19,9 @@ spring:
     sql:
       init:
         mode: always   # runs schema.sql and data.sql if present
+
+jwt:
+  secret: your-very-secure-secret-key-should-be-long
+  access-token-expiration: 86400000       # 1 day (ms)
+  refresh-token-expiration: 604800000
+  issuer: com.atria.userservice # 7 days (ms)

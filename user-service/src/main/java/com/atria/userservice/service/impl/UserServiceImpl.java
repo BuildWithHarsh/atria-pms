@@ -1,8 +1,7 @@
 package com.atria.userservice.service.impl;
 
-import com.atria.userservice.dto.UserRequestDTO;
-import com.atria.userservice.dto.UserResponseDTO;
-import com.atria.userservice.dto.UserResponseObject;
+import com.atria.userservice.dto.UserRequestDto;
+import com.atria.userservice.dto.UserResponseDto;
 import com.atria.userservice.entity.Role;
 import com.atria.userservice.entity.User;
 import com.atria.userservice.exception.UserAlreadyExistsException;
@@ -28,7 +27,7 @@ public class UserServiceImpl implements IUserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public UserResponseObject createUser(UserRequestDTO dto) {
+    public UserResponseDto createUser(UserRequestDto dto) {
 
         // ✅ Check duplicate email/username
         if (userRepository.existsByEmail(dto.getEmail())) {
@@ -61,7 +60,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseObject getUserById(Long id) {
+    public UserResponseDto getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User","ID",String.valueOf(id)));
 
@@ -69,7 +68,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<UserResponseObject> getAllUsers() {
+    public List<UserResponseDto> getAllUsers() {
         return userRepository.findAll()
                 .stream()
                 .map(UserMapper::toDTO)
@@ -77,7 +76,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public UserResponseObject updateUser(Long id, UserRequestDTO dto) {
+    public UserResponseDto updateUser(Long id, UserRequestDto dto) {
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User","ID",String.valueOf(id)));
