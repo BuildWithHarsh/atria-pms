@@ -1,9 +1,11 @@
 package com.atria.userservice.security;
 
+import com.atria.userservice.dto.ErrorResponseDto;
 import com.atria.userservice.exception.ExpiredJwtCustomException;
 import com.atria.userservice.exception.JwtCustomException;
 import com.atria.userservice.exception.MalformedJwtCustomException;
 import com.atria.userservice.repositories.UserRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -14,6 +16,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -46,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String jwtToken = authorization.substring(7);
 
             try {
-                if (jwtService.isAccessToken(jwtToken)) {
+                if (!jwtService.isAccessToken(jwtToken)) {
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -63,15 +67,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     }
                 });
             } catch (ExpiredJwtException expiredJwtException) {
-                throw new ExpiredJwtCustomException(expiredJwtException.getMessage());
+                SecurityContextHolder.clearContext();
+                sendErrorResponse(response, "JWT token is expired", HttpStatus.UNAUTHORIZED);
+                return;
             } catch (MalformedJwtException malformedJwtException) {
-                throw new MalformedJwtCustomException(malformedJwtException.getMessage());
+                SecurityContextHolder.clearContext();
+                sendErrorResponse(response, "Invalid JWT token", HttpStatus.BAD_REQUEST);
+                return;
             } catch (JwtException jwtException) {
-                throw new JwtCustomException(jwtException.getMessage());
+                SecurityContextHolder.clearContext();
+                sendErrorResponse(response, "JWT validation failed", HttpStatus.UNAUTHORIZED);
+                return;
             } catch (Exception e) {
-                throw new JwtCustomException(e.getMessage());
+                SecurityContextHolder.clearContext();
+                sendErrorResponse(response, e.getMessage(), HttpStatus.UNAUTHORIZED);
+                return;
             }
         }
         filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return request.getRequestURI().startsWith("/api/v1/auth");
+    }
+
+    private void sendErrorResponse(HttpServletResponse response, String message, HttpStatus status) throws IOException {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                "JWT Authentication Failed : Full Authentication Required to access this resource",
+                status,
+                message,
+                LocalDateTime.now().toString()
+        );
+        response.setStatus(status.value());
+        response.setContentType("application/json");
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponseDto));
     }
 }

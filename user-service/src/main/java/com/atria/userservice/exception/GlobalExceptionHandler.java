@@ -1,6 +1,8 @@
 package com.atria.userservice.exception;
 
 import com.atria.userservice.dto.ErrorResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +45,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -54,7 +57,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.NOT_FOUND,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.NOT_FOUND);
     }
@@ -66,7 +69,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
     }
@@ -80,7 +83,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.UNAUTHORIZED,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.UNAUTHORIZED);
@@ -95,7 +98,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.BAD_REQUEST,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.BAD_REQUEST);
@@ -110,10 +113,11 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
                 webRequest.getDescription(false),
                 HttpStatus.UNAUTHORIZED,
                 exception.getMessage(),
-                LocalDateTime.now()
+                LocalDateTime.now().toString()
         );
 
         return new ResponseEntity<>(errorResponseDTO, HttpStatus.UNAUTHORIZED);
     }
+
 
 }

@@ -2,11 +2,14 @@ package com.atria.userservice.controllers;
 
 import com.atria.userservice.constants.UserServiceConstants;
 import com.atria.userservice.dto.*;
+import com.atria.userservice.entity.RefreshToken;
 import com.atria.userservice.entity.User;
 import com.atria.userservice.mapper.UserMapper;
+import com.atria.userservice.repositories.RefreshTokenRepository;
 import com.atria.userservice.repositories.UserRepository;
 import com.atria.userservice.security.JwtService;
 import com.atria.userservice.service.IAuthService;
+import com.atria.userservice.util.RandomGeneraterUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +20,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -30,6 +35,8 @@ public class AuthController {
     private final UserRepository userRepository;
 
     private final JwtService jwtService;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponseDto<UserResponseDto>> register(
@@ -53,8 +60,15 @@ public class AuthController {
         if(!user.isEnabled()){
             throw new DisabledException("User is Disabled");
         }
+
+        long refreshTokenId = RandomGeneraterUtil.generateTenDigitNumber();
+        RefreshToken refreshTokenObj = RefreshToken.builder().jti(String.valueOf(refreshTokenId)).user(user).createAt(String.valueOf(new Date(System.currentTimeMillis()))).expiresAt(String.valueOf(new Date(System.currentTimeMillis() + jwtService.getRefreshTokenExpiration()))).build();
+
+        refreshTokenRepository.save(refreshTokenObj);
+
         String accessToken = jwtService.generateToken(user);
-        TokenResponse tokenResponse = new TokenResponse(accessToken, "", jwtService.getAccessTokenExpiration(), "Bearer", UserMapper.toDTO(user));
+        String refreshToken = jwtService.generateRefreshToken(user, refreshTokenObj.getJti());
+        TokenResponse tokenResponse = new TokenResponse(accessToken, refreshToken, jwtService.getAccessTokenExpiration(), "Bearer", UserMapper.toDTO(user));
         return ResponseEntity.ok(tokenResponse);
     }
 

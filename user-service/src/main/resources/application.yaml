@@ -20,6 +20,10 @@ spring:
       init:
         mode: always   # runs schema.sql and data.sql if present
 
+logging:
+  level:
+    org.springframework.security: DEBUG
+
 jwt:
   secret: yfjfnbdxgyfkjgydnbdfgtyjtgsvgcgftyhgdfvdfgb
   access-token-expiration: 86400000       # 1 day (ms)

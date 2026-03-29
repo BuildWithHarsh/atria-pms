@@ -38,12 +38,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/auth/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint((req, resp, e) -> {
-                    httpServletResponse.setContentType("application/json");
-                    httpServletResponse.setStatus(401);
+                    resp.setContentType("application/json");
+                    resp.setStatus(401);
                     String msz = "Unauthorized access : " + e.getMessage();
                     Map<String, String> errorMap = Map.of("Message", msz, "statuscode", Integer.toString(401));
                     var objectMapper = new ObjectMapper();
-                    httpServletResponse.getWriter().write(objectMapper.writeValueAsString(errorMap));
+                    resp.getWriter().write(objectMapper.writeValueAsString(errorMap));
 
                 }))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
