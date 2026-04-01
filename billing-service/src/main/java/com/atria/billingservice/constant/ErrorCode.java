@@ -1,0 +1,12 @@
+package com.atria.billingservice.constant;
+
+public enum ErrorCode {
+
+    FOLIO_NOT_FOUND,
+    DUPLICATE_CHARGE,
+    INVALID_FOLIO_STATE,
+    PAYMENT_FAILED,
+    UNAUTHORIZED_TENANT,
+    VALIDATION_ERROR,
+    DUPLICATE_TRANSACTION_ID, INTERNAL_SERVER_ERROR
+}
