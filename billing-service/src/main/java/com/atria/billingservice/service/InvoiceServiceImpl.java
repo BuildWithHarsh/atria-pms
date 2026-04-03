@@ -3,10 +3,7 @@ package com.atria.billingservice.service;
 import com.atria.billingservice.dto.InvoiceItem;
 import com.atria.billingservice.dto.InvoiceResponse;
 import com.atria.billingservice.dto.InvoiceSummary;
-import com.atria.billingservice.entity.Folio;
-import com.atria.billingservice.entity.FolioItem;
-import com.atria.billingservice.entity.FolioItemType;
-import com.atria.billingservice.entity.Payment;
+import com.atria.billingservice.entity.*;
 import com.atria.billingservice.exception.FolioNotFoundException;
 import com.atria.billingservice.repository.FolioItemRepository;
 import com.atria.billingservice.repository.FolioRepository;
@@ -45,7 +42,9 @@ public class InvoiceServiceImpl implements InvoiceService {
         // 3. Prepare summary
         InvoiceSummary summary = new InvoiceSummary();
 
-        List<InvoiceItem> invoiceItems = new ArrayList<>();
+        List<InvoiceItem> chargeItems = new ArrayList<>();
+        List<InvoiceItem> paymentItems = new ArrayList<>();
+
 
         for (FolioItem item : items) {
 
@@ -88,7 +87,11 @@ public class InvoiceServiceImpl implements InvoiceService {
                 }
             }
 
-            invoiceItems.add(dto);
+            if(dto.getType().equals(FolioItemType.PAYMENT.toString())) {
+                paymentItems.add(dto);
+            }else  {
+                chargeItems.add(dto);
+            }
         }
 
         // 4. Build response
@@ -96,12 +99,17 @@ public class InvoiceServiceImpl implements InvoiceService {
         response.setFolioId(folio.getId());
         response.setBillNumber(folio.getBillNumber());
         response.setCustomerId(folio.getCustomerId());
-
+        if (folio.getStatus() == FolioStatus.CLOSED) {
+            response.setInvoiceType("FINAL");
+        } else {
+            response.setInvoiceType("PROFORMA");
+        }
         response.setSummary(summary);
         response.setTotalCharges(folio.getTotalCharges());
         response.setTotalPayments(folio.getTotalPayments());
         response.setBalance(folio.getBalance());
-        response.setItems(invoiceItems);
+        response.setChargeItems(chargeItems);
+        response.setPaymentItems(paymentItems);
 
         return response;
     }

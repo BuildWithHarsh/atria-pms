@@ -1,27 +1,23 @@
-package com.atria.billingservice.dto;
+package com.atria.deskservice.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class InvoiceResponse {
+public class FolioResponse {
 
     private String folioId;
-    private String billNumber;
     private String customerId;
-
-    private InvoiceSummary summary;
-
+    private String status;
+    private String currency;
     private BigDecimal totalCharges;
     private BigDecimal totalPayments;
     private BigDecimal balance;
-    private String invoiceType; // PROFORMA / FINAL
-    private List<InvoiceItem> chargeItems;
-    private List<InvoiceItem> paymentItems;
+    private LocalDateTime createdAt;
 }
